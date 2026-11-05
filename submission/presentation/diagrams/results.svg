@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="470" viewBox="0 0 1200 470" role="img" aria-labelledby="title desc">
+  <title id="title">Recorded QPU Sentinel simulator results</title>
+  <desc id="desc">The saved Aer simulator run had 86.28 percent feasible shots, 14.51 percent shots of the exact optimum, and a best feasible selection matching the classical optimum.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f5f8fc; }
+      .title { font: 700 25px "Segoe UI", Arial, sans-serif; fill: #18304a; }
+      .sub { font: 14px "Segoe UI", Arial, sans-serif; fill: #617890; }
+      .label { font: 600 15px "Segoe UI", Arial, sans-serif; fill: #304b66; }
+      .value { font: 700 19px "Segoe UI", Arial, sans-serif; fill: #18304a; }
+      .small { font: 13px "Segoe UI", Arial, sans-serif; fill: #617890; }
+      .track { fill: #e1e9f2; }
+      .bar1 { fill: #458b73; }
+      .bar2 { fill: #5b7fc0; }
+      .panel { fill: #fff; stroke: #c6d3e1; stroke-width: 2; rx: 16; }
+      .opt { fill: #e5f6ef; stroke: #429472; stroke-width: 2; rx: 16; }
+      .caveat { fill: #fff2d9; stroke: #d29a39; stroke-width: 1.5; rx: 10; }
+    </style>
+  </defs>
+  <rect class="bg" width="1200" height="470" rx="20"/>
+  <text class="title" x="48" y="52">Recorded results · Qiskit Aer simulator</text>
+  <text class="sub" x="48" y="78">Saved notebook run · 8,192 final shots · four-variable illustrative problem</text>
+
+  <rect class="panel" x="48" y="112" width="700" height="245" rx="16"/>
+  <text class="label" x="78" y="158">Feasible samples (exactly 2 assets)</text>
+  <rect class="track" x="78" y="176" width="610" height="28" rx="8"/>
+  <rect class="bar1" x="78" y="176" width="526" height="28" rx="8"/>
+  <text class="value" x="78" y="235">7,068 / 8,192</text>
+  <text class="small" x="244" y="235">86.28% feasible</text>
+
+  <text class="label" x="78" y="278">Exact-optimum samples (selection 0110)</text>
+  <rect class="track" x="78" y="296" width="610" height="28" rx="8"/>
+  <rect class="bar2" x="78" y="296" width="89" height="28" rx="8"/>
+  <text class="value" x="78" y="347">1,189 / 8,192</text>
+  <text class="small" x="244" y="347">14.51% selected ASSET_B + ASSET_C</text>
+
+  <rect class="opt" x="786" y="112" width="366" height="245" rx="16"/>
+  <text class="label" x="816" y="158">Classical exhaustive optimum</text>
+  <text x="816" y="218" style="font:700 40px 'Segoe UI',Arial,sans-serif;fill:#286c54">0110</text>
+  <text class="value" x="816" y="251">ASSET_B + ASSET_C</text>
+  <text class="small" x="816" y="283">Objective: -0.093</text>
+  <text class="small" x="816" y="309">Also the best feasible QAOA sample</text>
+  <text class="small" x="816" y="333">Circuit: p = 2 · depth 15 · 12 two-qubit gates</text>
+
+  <rect class="caveat" x="48" y="385" width="1104" height="52" rx="10"/>
+  <text class="label" x="70" y="408">Simulator-only result — no hardware execution and no quantum-advantage claim.</text>
+  <text class="small" x="70" y="427">Inputs are hypothetical. This four-variable example is compared with an exact classical search.</text>
+</svg>

@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#171F44">
+    <title>QPU Sentinel</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="QPU Sentinel">
+        <span class="brand-mark">QS</span><strong>QPU Sentinel</strong>
+      </a>
+      <div class="runtime"><span class="status-dot"></span> Local Aer <span class="runtime-divider">·</span> No QPU connected</div>
+    </header>
+    <main class="app-shell">
+      <nav class="tabs" role="tablist" aria-label="Application workspaces">
+        <button id="tab-portfolio" class="tab active" role="tab" aria-selected="true" aria-controls="workspace-portfolio" data-tab="portfolio">Portfolio Lab</button>
+        <button id="tab-benchmark" class="tab" role="tab" aria-selected="false" aria-controls="workspace-benchmark" data-tab="benchmark">Benchmark Lab</button>
+        <button id="tab-experiments" class="tab" role="tab" aria-selected="false" aria-controls="workspace-experiments" data-tab="experiments">Experiment Studio</button>
+        <button id="tab-history" class="tab" role="tab" aria-selected="false" aria-controls="workspace-history" data-tab="history">Run History</button>
+        <button id="tab-assistant" class="tab" role="tab" aria-selected="false" aria-controls="workspace-assistant" data-tab="assistant">Research Assistant</button>
+        <button id="tab-circuit" class="tab" role="tab" aria-selected="false" aria-controls="workspace-circuit" data-tab="circuit">Circuit Explorer</button>
+        <button id="tab-hardware" class="tab" role="tab" aria-selected="false" aria-controls="workspace-hardware" data-tab="hardware">Hardware Analysis</button>
+        <button id="tab-report" class="tab" role="tab" aria-selected="false" aria-controls="workspace-report" data-tab="report">Research Report</button>
+      </nav>
+
+      <section id="workspace-portfolio" class="tab-workspace" role="tabpanel" aria-labelledby="tab-portfolio">
+        <div class="workspace-title">
+          <div><h1>Portfolio Lab</h1><p>Configure a portfolio and compare exact search with QAOA on Aer.</p></div>
+          <span class="run-state"><span class="status-dot"></span> Ready</span>
+        </div>
+        <div class="portfolio-layout">
+          <aside class="panel input-panel" aria-label="Experiment inputs">
+            <div class="panel-heading"><h2>Experiment inputs</h2><button id="reset" class="text-button" type="button">Reset</button></div>
+            <div id="asset-editor" class="asset-editor" aria-live="polite"></div>
+            <label class="field-label" for="covariance">Covariance matrix <span class="hint" title="Rows and columns follow asset order; enter a symmetric positive-semidefinite matrix." aria-label="Covariance matrix help">?</span></label>
+            <textarea id="covariance" class="matrix-input" spellcheck="false" aria-label="Covariance matrix JSON"></textarea>
+            <div class="input-grid">
+              <label>Assets to select<input id="cardinality" type="number" min="1" step="1"></label>
+              <label>Risk aversion<input id="risk-aversion" type="number" min="0" step="0.1"></label>
+              <label>QAOA depth<input id="depth" type="number" min="1" max="8" step="1"></label>
+              <label>Final shots<input id="final-shots" type="number" min="1" max="32768" step="1024"></label>
+            </div>
+            <details class="advanced">
+              <summary>Optimizer and penalty settings</summary>
+              <div class="input-grid">
+                <label>Optimizer shots<input id="optimizer-shots" type="number" min="1" max="8192"></label>
+                <label>Iterations<input id="max-iterations" type="number" min="1" max="100"></label>
+                <label>QUBO penalty<input id="penalty" type="number" min="0.0001" step="0.1"></label>
+                <label>Random seed<input id="seed" type="number" min="0" step="1"></label>
+              </div>
+            </details>
+            <button id="run" class="button button-primary" type="button"><span>Run Experiment</span><span class="button-arrow" aria-hidden="true">→</span></button>
+          </aside>
+
+          <section class="results-column" aria-label="Experiment results">
+            <div id="portfolio-state" class="empty-state-panel">
+              <strong>No experiment run</strong>
+              <span>Run the configured portfolio to calculate and display measured results.</span>
+            </div>
+            <div id="run-notice" class="notice hidden" role="status"></div>
+            <div id="portfolio-results" class="hidden">
+              <div id="summary-cards" class="summary-cards"></div>
+              <div class="chart-grid">
+                <article class="panel chart-panel">
+                  <div class="panel-heading"><h2>Portfolio composition</h2><span class="quiet-label">Binary selection · not capital weights</span></div>
+                  <div class="donut-wrap"><svg id="allocation-chart" viewBox="0 0 220 220" role="img" aria-label="Portfolio selection composition"></svg><div id="allocation-legend" class="chart-legend"></div></div>
+                </article>
+                <article class="panel chart-panel">
+                  <div class="panel-heading"><h2>Risk versus return</h2><span class="quiet-label">Exact feasible portfolios</span></div>
+                  <svg id="risk-return-chart" class="wide-chart" viewBox="0 0 520 285" role="img" aria-label="Risk and return for feasible portfolios"></svg>
+                </article>
+                <article class="panel chart-panel comparison-panel">
+                  <div class="panel-heading"><h2>Objective comparison</h2><span class="quiet-label">Lower is better</span></div>
+                  <svg id="comparison-chart" class="wide-chart" viewBox="0 0 760 192" role="img" aria-label="Classical and QAOA objective comparison"></svg>
+                  <p id="comparison-footnote" class="chart-footnote"></p>
+                </article>
+              </div>
+              <details class="data-table panel">
+                <summary>Exact feasible portfolio results <span id="classical-count"></span></summary>
+                <div class="table-scroll"><table><thead><tr><th>Selection</th><th>Assets</th><th>Return</th><th>Variance</th><th>Objective</th></tr></thead><tbody id="classical-rows"></tbody></table></div>
+              </details>
+              <details class="data-table panel">
+                <summary>QAOA sample distribution <span id="qaoa-count-label"></span></summary>
+                <div class="table-scroll"><table><thead><tr><th>Selection</th><th>Shots</th><th>Probability</th><th>Feasible</th><th>Objective</th></tr></thead><tbody id="qaoa-rows"></tbody></table></div>
+              </details>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="workspace-benchmark" class="tab-workspace" role="tabpanel" aria-labelledby="tab-benchmark" hidden>
+        <div class="workspace-title">
+          <div><h1>Benchmark Lab</h1><p>Generate synthetic portfolio cases and execute each selected QAOA run on Aer.</p></div>
+          <span id="benchmark-plan" class="quiet-label">Suite not run</span>
+        </div>
+        <section class="panel benchmark-controls">
+          <label>Asset count<select id="benchmark-assets"><option value="all">All sizes</option><option value="3">3 assets</option><option value="4">4 assets</option><option value="5">5 assets</option><option value="6">6 assets</option></select></label>
+          <label>Problem type<select id="benchmark-type"><option value="all">All types</option><option value="independent">Independent assets</option><option value="correlated">Positively correlated assets</option><option value="mixed">Mixed-factor covariance</option></select></label>
+          <button id="benchmark-run" class="button button-primary" type="button">Generate &amp; run selected cases</button>
+          <button id="benchmark-export" class="button button-secondary" type="button" disabled>Export CSV</button>
+        </section>
+        <div id="benchmark-progress-wrap" class="panel progress-panel hidden">
+          <div class="progress-label"><strong id="benchmark-progress-text">Preparing benchmark…</strong><span id="benchmark-progress-count"></span></div>
+          <progress id="benchmark-progress" max="100" value="0"></progress>
+        </div>
+        <div id="benchmark-state" class="empty-state-panel">
+          <strong>No benchmark results</strong>
+          <span>Choose filters and run cases. Recipes become results only after generation and execution.</span>
+        </div>
+        <div id="benchmark-results" class="hidden">
+          <div id="benchmark-summary" class="summary-cards"></div>
+          <div class="chart-grid benchmark-charts">
+            <article class="panel chart-panel"><div class="panel-heading"><h2>Objective gap by type</h2><span class="quiet-label">Measured suite average</span></div><svg id="benchmark-gap-chart" class="wide-chart" viewBox="0 0 620 205" role="img" aria-label="Average objective gap by benchmark problem type"></svg></article>
+            <article class="panel chart-panel"><div class="panel-heading"><h2>Feasibility by type</h2><span class="quiet-label">Aer sample rate</span></div><svg id="benchmark-feasibility-chart" class="wide-chart" viewBox="0 0 620 205" role="img" aria-label="Average QAOA feasibility by benchmark problem type"></svg></article>
+          </div>
+          <section class="panel data-table benchmark-table">
+            <div class="panel-heading"><h2>Executed cases</h2><span id="benchmark-row-count" class="quiet-label"></span></div>
+            <div class="table-scroll"><table><thead><tr>
+              <th><button class="sort-button" data-sort="case_id">Case</button></th>
+              <th><button class="sort-button" data-sort="asset_count">Assets</button></th>
+              <th><button class="sort-button" data-sort="problem_label">Problem type</button></th>
+              <th><button class="sort-button" data-sort="objective_gap">Objective gap</button></th>
+              <th>Penalty guarantee</th>
+              <th><button class="sort-button" data-sort="feasibility_rate">Feasibility</button></th>
+              <th><button class="sort-button" data-sort="runtime_seconds">Runtime</button></th>
+              <th><button class="sort-button" data-sort="circuit_depth">Depth</button></th>
+              <th><button class="sort-button" data-sort="two_qubit_gates">2Q gates</button></th>
+            </tr></thead><tbody id="benchmark-rows"></tbody></table></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="workspace-experiments" class="tab-workspace" role="tabpanel" aria-labelledby="tab-experiments" hidden>
+        <div class="workspace-title">
+          <div><h1>Experiment Studio</h1><p>Run matched, seeded methods on the same synthetic portfolio instance.</p></div>
+          <span class="warning-label">Local CPU / Aer · no QPU</span>
+        </div>
+        <div class="experiment-layout">
+          <section class="panel experiment-controls">
+            <div class="panel-heading"><h2>Problem and reproducibility</h2></div>
+            <div class="input-grid">
+              <label>Assets<select id="experiment-assets">
+                <option>3</option><option>4</option><option>5</option><option>6</option>
+                <option>7</option><option>8</option><option>9</option><option>10</option>
+                <option>12</option><option>15</option><option>20</option>
+              </select></label>
+              <label>Assets to select<input id="experiment-cardinality" type="number" min="1" value="2"></label>
+              <label>Covariance family<select id="experiment-covariance"><option value="mixed">Mixed factors</option><option value="independent">Independent</option><option value="correlated">Positive correlation</option></select></label>
+              <label>Base seed<input id="experiment-seed" type="number" min="0" value="2026"></label>
+              <label>Repeated runs<input id="experiment-repetitions" type="number" min="1" max="10" value="3"></label>
+              <label>Risk aversion<input id="experiment-risk" type="number" min="0" step="0.1" value="1"></label>
+            </div>
+            <fieldset class="algorithm-options">
+              <legend>Methods (exact search is always the reference)</legend>
+              <label><input type="checkbox" name="experiment-algorithm" value="greedy" checked> Greedy + one-swap improvement</label>
+              <label><input type="checkbox" name="experiment-algorithm" value="random" checked> Random feasible sampling</label>
+              <label><input type="checkbox" name="experiment-algorithm" value="annealing" checked> Simulated annealing</label>
+              <label><input type="checkbox" name="experiment-algorithm" value="qaoa" checked> Standard QAOA on Aer</label>
+            </fieldset>
+            <details class="advanced">
+              <summary>Compute budget</summary>
+              <div class="input-grid">
+                <label>Random candidates<input id="experiment-random-samples" type="number" min="1" max="100000" value="512"></label>
+                <label>Annealing steps<input id="experiment-annealing-steps" type="number" min="1" max="100000" value="2000"></label>
+                <label>QAOA optimizer shots<input id="experiment-optimizer-shots" type="number" min="1" max="8192" value="128"></label>
+                <label>QAOA final shots<input id="experiment-final-shots" type="number" min="1" max="32768" value="512"></label>
+                <label>QAOA iterations<input id="experiment-qaoa-iterations" type="number" min="1" max="100" value="12"></label>
+              </div>
+            </details>
+            <button id="experiment-run" class="button button-primary" type="button">Run matched experiment</button>
+            <p class="subtle-note">Exact feasible enumeration is capped at 250,000 candidates. QUBO identity checks are exhaustive through 12 assets and use 512 seeded checks above that size. The QAOA mixer does not preserve cardinality; feasibility is measured.</p>
+          </section>
+          <section class="results-column" aria-label="Matched experiment results">
+            <div id="experiment-state" class="empty-state-panel"><strong>No experiment selected</strong><span>Choose a size, cardinality, methods, and seed, then run the experiment.</span></div>
+            <div id="experiment-summary" class="summary-cards"></div>
+            <div id="experiment-result" class="panel data-table hidden">
+              <div class="panel-heading"><h2>Matched method comparison</h2><span id="experiment-id-label" class="quiet-label"></span></div>
+              <div class="table-scroll"><table><thead><tr><th>Method</th><th>Runs</th><th>Mean objective</th><th>Mean gap</th><th>Feasible</th><th>Optimal runs</th><th>Repeatability</th><th>Mean runtime</th></tr></thead><tbody id="experiment-summary-rows"></tbody></table></div>
+              <div class="panel-heading run-table-heading"><h2>Individual runs</h2><span class="quiet-label">Same instance · independent run seeds</span></div>
+              <div class="table-scroll"><table><thead><tr><th>Method</th><th>Seed</th><th>Selection</th><th>Objective</th><th>Gap</th><th>Feasible</th><th>Runtime</th><th>Depth</th><th>2Q gates</th></tr></thead><tbody id="experiment-run-rows"></tbody></table></div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="workspace-history" class="tab-workspace" role="tabpanel" aria-labelledby="tab-history" hidden>
+        <div class="workspace-title"><div><h1>Run History</h1><p>Persisted experiment specifications, statuses, and measured results.</p></div><button id="history-refresh" class="button button-secondary" type="button">Refresh</button></div>
+        <div id="history-state" class="empty-state-panel"><strong>Loading saved runs</strong><span>Reading local SQLite experiment records.</span></div>
+        <section id="history-panel" class="panel data-table hidden"><div class="table-scroll"><table><thead><tr><th>Experiment</th><th>Status</th><th>Assets</th><th>Cardinality</th><th>Seed</th><th>Methods</th><th>Created</th><th>Actions</th></tr></thead><tbody id="history-rows"></tbody></table></div></section>
+      </section>
+
+      <section id="workspace-assistant" class="tab-workspace" role="tabpanel" aria-labelledby="tab-assistant" hidden>
+        <div class="workspace-title"><div><h1>Research Assistant</h1><p>Ask questions about one saved experiment; responses are grounded in its stored metrics.</p></div><span id="assistant-provider-label" class="quiet-label">Checking provider</span></div>
+        <div class="assistant-layout">
+          <section class="panel assistant-controls">
+            <label class="field-label" for="assistant-experiment">Completed experiment</label>
+            <select id="assistant-experiment"><option value="">Loading saved experiments…</option></select>
+            <label class="field-label assistant-question-label" for="assistant-question">Research question</label>
+            <textarea id="assistant-question" class="assistant-question" maxlength="2000" placeholder="For example: compare measured QAOA feasibility and optimal-sample rates to the exact reference."></textarea>
+            <label class="consent-label"><input id="assistant-consent" type="checkbox"><span>I consent to send this experiment's summary, measured run metrics, and my question to the configured AI provider.</span></label>
+            <button id="assistant-ask" class="button button-primary" type="button" disabled>Ask about this experiment</button>
+            <p id="assistant-status" class="subtle-note" role="status">No provider has been checked yet.</p>
+            <p class="subtle-note">Provider credentials stay on the server. No experiment data is sent until you submit with consent checked. Provider answers may still be wrong; verify cited experiment fields.</p>
+          </section>
+          <section class="panel assistant-answer-panel" aria-live="polite">
+            <div class="panel-heading"><h2>Evidence-based response</h2><span id="assistant-answer-source" class="quiet-label"></span></div>
+            <div id="assistant-answer" class="assistant-answer">Select a completed experiment and ask a question. The assistant does not invent a fallback answer when no provider is configured.</div>
+          </section>
+        </div>
+      </section>
+
+      <section id="workspace-circuit" class="tab-workspace" role="tabpanel" aria-labelledby="tab-circuit" hidden>
+        <div class="workspace-title"><div><h1>Circuit Explorer</h1><p>Optimized logical QAOA circuit from the latest experiment.</p></div><span id="circuit-run-label" class="quiet-label">No circuit generated</span></div>
+        <div id="circuit-state" class="empty-state-panel"><strong>No circuit to inspect</strong><span>Run an experiment in Portfolio Lab to generate its parameter-bound circuit.</span></div>
+        <div id="circuit-results" class="hidden">
+          <div id="circuit-summary" class="summary-cards"></div>
+          <section class="panel circuit-panel"><div class="panel-heading"><h2>Logical QAOA circuit</h2><span id="measurement-label" class="quiet-label"></span></div>
+            <div class="circuit-scroll"><svg id="circuit-chart" class="circuit-chart" role="img" aria-label="Generated QAOA circuit"></svg></div>
+            <div id="gate-counts" class="gate-counts"></div>
+          </section>
+          <p class="subtle-note">The diagram is the actual optimized logical circuit. Transpiled depth and two-qubit gate count are measured from the circuit submitted to local Aer.</p>
+        </div>
+      </section>
+
+      <section id="workspace-hardware" class="tab-workspace" role="tabpanel" aria-labelledby="tab-hardware" hidden>
+        <div class="workspace-title"><div><h1>Hardware Analysis</h1><p>Compare the measured circuit against illustrative compatibility profiles.</p></div><span class="warning-label">Illustrative profiles only</span></div>
+        <div id="hardware-state" class="empty-state-panel"><strong>No measured circuit</strong><span>Run an experiment to evaluate its depth, qubit count and gate requirements.</span></div>
+        <div id="hardware-results" class="hidden">
+          <div id="measured-circuit-indicator" class="summary-cards"></div>
+          <div id="recommendation" class="recommendation"></div>
+          <div id="backend-cards" class="backend-cards"></div>
+          <p class="subtle-note">All profile capacities, connectivity and error values are fictional teaching inputs. No QPU execution or real-backend calibration data is used.</p>
+        </div>
+      </section>
+
+      <section id="workspace-report" class="tab-workspace" role="tabpanel" aria-labelledby="tab-report" hidden>
+        <div class="workspace-title"><div><h1>Research Report</h1><p>Previously recorded notebook experiment · local Qiskit Aer.</p></div><span class="run-state"><span class="status-dot"></span> Simulator result</span></div>
+        <section class="panel report-panel">
+          <h2>Recorded four-asset run</h2>
+          <p class="report-source">Source: <code>notebooks/qpu_sentinel_qaoa.ipynb</code> · saved notebook outputs</p>
+          <div class="report-grid">
+            <div><span>Classical optimum</span><strong>0110</strong><small>Assets B and C</small></div>
+            <div><span>Best feasible QAOA sample</span><strong>0110</strong><small>Same selection as exact search</small></div>
+            <div><span>Feasible samples</span><strong>7,068 / 8,192</strong><small>86.2793% measured</small></div>
+            <div><span>Optimal samples</span><strong>1,189 / 8,192</strong><small>14.5142% measured</small></div>
+            <div><span>Transpiled circuit depth</span><strong>15</strong><small>QAOA depth p = 2</small></div>
+            <div><span>Two-qubit gates</span><strong>12</strong><small>Counted after transpilation</small></div>
+          </div>
+          <div class="report-caveat"><strong>Interpretation</strong><span>These are simulator measurements for a four-variable illustrative problem. They are not hardware results and do not establish quantum advantage. The benchmark cases in Benchmark Lab are separate synthetic instances and are reported only after execution.</span></div>
+        </section>
+      </section>
+    </main>
+    <script src="/app.js" defer></script>
+  </body>
+</html>

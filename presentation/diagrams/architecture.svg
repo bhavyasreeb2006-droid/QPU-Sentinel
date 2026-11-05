@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-labelledby="title desc">
+  <title id="title">QPU Sentinel product and experiment architecture</title>
+  <desc id="desc">The notebook and optional local browser interface share the portfolio workflow and existing QAOA simulator. Circuit metrics feed a suitability analyzer that ranks three fictional simulated profiles.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#52708f"/>
+    </marker>
+    <style>
+      .bg { fill: #f5f8fc; }
+      .box { fill: #fff; stroke: #b9c9dc; stroke-width: 2; rx: 14; }
+      .blue { fill: #e7f0ff; stroke: #5a85c5; }
+      .purple { fill: #f1eaff; stroke: #8a67bb; }
+      .green { fill: #e5f6ef; stroke: #429472; }
+      .amber { fill: #fff2d9; stroke: #d29a39; }
+      .line { stroke: #52708f; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #d29a39; stroke-width: 2; fill: none; stroke-dasharray: 6 6; marker-end: url(#arrow); }
+      .title { font: 700 25px "Segoe UI", Arial, sans-serif; fill: #18304a; }
+      .head { font: 700 17px "Segoe UI", Arial, sans-serif; fill: #203d5c; }
+      .body { font: 14px "Segoe UI", Arial, sans-serif; fill: #435b73; }
+      .tag { font: 700 12px "Segoe UI", Arial, sans-serif; letter-spacing: .7px; fill: #667e96; }
+      .note { font: 13px "Segoe UI", Arial, sans-serif; fill: #526a82; }
+    </style>
+  </defs>
+  <rect class="bg" width="1200" height="650" rx="20"/>
+  <text class="title" x="48" y="52">QPU Sentinel · product + experiment architecture</text>
+  <text class="tag" x="48" y="78">NOTEBOOK-FIRST · SHARED WORKFLOW · LOCAL AER SIMULATION</text>
+
+  <rect class="box blue" x="48" y="137" width="230" height="118"/>
+  <text class="tag" x="69" y="164">OPTIONAL PRODUCT UI</text>
+  <text class="head" x="69" y="193">Local browser app</text>
+  <text class="body" x="69" y="219">Edit inputs · compare results</text>
+  <text class="body" x="69" y="239">Circuit + profile analysis</text>
+
+  <rect class="box blue" x="48" y="320" width="230" height="118"/>
+  <text class="tag" x="69" y="347">PRIMARY DELIVERABLE</text>
+  <text class="head" x="69" y="376">Jupyter notebook</text>
+  <text class="body" x="69" y="402">Runnable experiment + outputs</text>
+  <text class="body" x="69" y="422">Same analysis modules</text>
+
+  <rect class="box" x="345" y="222" width="245" height="150"/>
+  <text class="tag" x="367" y="251">SHARED WORKFLOW</text>
+  <text class="head" x="367" y="282">Validate + optimize</text>
+  <text class="body" x="367" y="309">Classical exact reference</text>
+  <text class="body" x="367" y="331">QUBO + all-state verification</text>
+  <text class="body" x="367" y="353">Existing QAOA runner</text>
+
+  <rect class="box green" x="655" y="222" width="220" height="150"/>
+  <text class="tag" x="677" y="251">MEASURED SIMULATOR RUN</text>
+  <text class="head" x="677" y="282">Qiskit Aer</text>
+  <text class="body" x="677" y="309">QAOA optimization + shots</text>
+  <text class="body" x="677" y="331">Depth · two-qubit gates</text>
+  <text class="body" x="677" y="353">Local simulation only</text>
+
+  <rect class="box purple" x="940" y="222" width="212" height="150"/>
+  <text class="tag" x="962" y="251">RESULT COMPARISON</text>
+  <text class="head" x="962" y="282">Portfolio results</text>
+  <text class="body" x="962" y="309">Exact vs sampled outcomes</text>
+  <text class="body" x="962" y="331">Counts · feasibility</text>
+  <text class="body" x="962" y="353">Measured circuit metrics</text>
+
+  <rect class="box amber" x="345" y="482" width="245" height="94"/>
+  <text class="tag" x="367" y="509">FICTIONAL INPUT DATA</text>
+  <text class="head" x="367" y="538">3 simulated profiles</text>
+  <text class="body" x="367" y="559">Never real device claims</text>
+
+  <rect class="box amber" x="655" y="462" width="220" height="132"/>
+  <text class="tag" x="677" y="490">PLANNING ONLY</text>
+  <text class="head" x="677" y="520">Suitability analyzer</text>
+  <text class="body" x="677" y="546">Capacity · depth · errors</text>
+  <text class="body" x="677" y="568">Couplers · reasons · ranking</text>
+
+  <rect class="box" x="940" y="482" width="212" height="94"/>
+  <text class="tag" x="962" y="509">EXPLAINABLE OUTPUT</text>
+  <text class="head" x="962" y="538">Profile ranking</text>
+  <text class="body" x="962" y="559">Not hardware validation</text>
+
+  <path class="line" d="M278 195H330"/>
+  <path class="line" d="M278 379C314 379 305 332 330 332"/>
+  <path class="line" d="M590 297H645"/>
+  <path class="line" d="M875 297H930"/>
+  <path class="line" d="M765 380V452"/>
+  <path class="line" d="M875 528H930"/>
+  <path class="dash" d="M590 529H645"/>
+  <text class="note" x="48" y="620">The analyzer scores illustrative profiles against circuit requirements. The project does not contact a QPU or claim quantum advantage.</text>
+</svg>
